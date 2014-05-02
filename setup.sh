@@ -243,8 +243,17 @@ cd $TMPDIR || { echo "Cannot cd into a temporary directory, aborting!"; exit 1; 
 
 cp $OPENVPN/easy-rsa/keys/ca.crt "ca-$ME.crt"
 cp $OPENVPN/easy-rsa/keys/client1-$ME.key $OPENVPN/easy-rsa/keys/client1-$ME.crt .
-sed -i -e "s/VPN_SERVER_ADDRESS/$IP/" -e "s/client1/client1-$ME/" -e "s/^ca ca.crt/ca ca-$ME.crt/" $ME.ovpn
+sed -i -e "s/VPN_SERVER_ADDRESS/$IP/" -e "s/^key client1.key//" -e "s/^cert client1.crt//" -e "s/^ca ca.crt//" $ME.ovpn
 sed -i -e "s/VPN_PROTO/$PROTO/" -e "s/VPN_PORT/$PORT/"  $ME.ovpn
+echo '<ca>' >> $ME.ovpn
+cat ca-$ME.crt >> $ME.ovpn
+echo '</ca>' >> $ME.ovpn
+echo '<key>' >> $ME.ovpn
+cat client1-$ME.key >> $ME.ovpn
+echo '</key>' >> $ME.ovpn
+echo '<cert>' >> $ME.ovpn
+cat client1-$ME.crt >> $ME.ovpn
+echo '</cert>' >> $ME.ovpn
 zip $ME-$IP.zip $ME.ovpn ca-$ME.crt client1-$ME.key client1-$ME.crt
 chmod -R a+rX .
 
